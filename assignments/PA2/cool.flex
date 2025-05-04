@@ -221,17 +221,19 @@ SINGLE_OPERATOR      [\<\=\+/\-\*\.~\,;\:\(\)@\{\}]
   cool_yylval.symbol = stringtable.add_string(string_buf);
   return STR_CONST; 
 }
-<STRING>"\\\n"   {
+
+<STRING>"\\\n"   {          // 匹配字符串中的 \ + 换行，这是合法的
   *string_buf_ptr++ = '\n'; 
   curr_lineno++;
   CHECK_STR_LEN
 }
+
 <STRING><<EOF>>  {
   cool_yylval.error_msg = "EOF in string constant";
   ERROR_AND_INIT
 }
-<STRING>"\0"    {
-  char ch;
+<STRING>"\0"    {           // 错误分两种，分别是转义空字符错误和空字符错误
+  char ch;                  // 前者是在合法的字符串中，后者字符串没有结束
   char isEscaped = false;
   while((ch = yyinput()) != '\n' && ch != EOF)
   {
@@ -249,7 +251,7 @@ SINGLE_OPERATOR      [\<\=\+/\-\*\.~\,;\:\(\)@\{\}]
   ERROR_AND_INIT
 }
 
-<STRING>\n      {
+<STRING>\n      {           // 匹配换行符
   cool_yylval.error_msg = "EOF in string constant";
   curr_lineno++;
   ERROR_AND_INIT

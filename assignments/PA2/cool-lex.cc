@@ -1376,7 +1376,7 @@ case 40:
 /* rule 40 can match eol */
 YY_RULE_SETUP
 #line 224 "cool.flex"
-{
+{          // 匹配字符串中的\n
   *string_buf_ptr++ = '\n'; 
   curr_lineno++;
   CHECK_STR_LEN
@@ -1415,7 +1415,7 @@ case 42:
 /* rule 42 can match eol */
 YY_RULE_SETUP
 #line 252 "cool.flex"
-{
+{           // 匹配换行符
   cool_yylval.error_msg = "EOF in string constant";
   curr_lineno++;
   ERROR_AND_INIT
