@@ -2,9 +2,9 @@
 
 ## 简介
 
-记录Stanford大学CS143编译原理的学习过程:sleeping:
+记录Stanford大学CS143编译原理的学习过程:blue_book:
 
-> Cool语法的学习跳过，PA实现在[assignments/PA1/stack.cl](assignments/PA1/stack.cl)
+> Cool语法的学习笔记没做笔记，对应PA实现在[assignments/PA1/stack.cl](assignments/PA1/stack.cl)
 
 ---
 
@@ -108,8 +108,9 @@ TYPEID    [A-Z]{ID}*
 
 `flex` 作为一种工具，简化了构建词法分析器的复杂度，使我们只需专注于正则规则的编写，而不必手写自动机代码。
 
-
 ## 2. parser - 语法分析
+
+所谓 parser，一般是指把某种格式的文本（字符串）转换成某种数据结构的过程。最常见的 parser，是把程序文本转换成编译器内部的一种叫做“抽象语法树”（AST）的数据结构。也有简单一些的 parser，用于处理 CSV，JSON，XML 之类的格式。
 
 词法分析关心单词是否拼写正确，而语法分析关心这些单词组合在一起是否符合语法规则。
 
@@ -195,7 +196,7 @@ Factor -> ( Expr )      |   id
 
 文法规则示例（有二义性）：
 
-```
+```cmd
 Stmt -> if Expr then Stmt else Stmt
       | if Expr then Stmt
       | OtherStmt
@@ -210,7 +211,7 @@ Stmt -> if Expr then Stmt else Stmt
 
 **改写示例：**
 
-```
+```cmd
 Stmt         -> MatchedStmt | UnmatchedStmt
 MatchedStmt  -> if Expr then MatchedStmt else MatchedStmt  // 完整的 if-then-else
              |  OtherStmt                                // 其他非 if 语句
@@ -282,7 +283,7 @@ UnmatchedStmt -> if Expr then Stmt                       // then 后面可以是
 
 * parse_expression() 类似地会查看输入，决定是解析 term + term 结构还是单个 term 结构，并调用 parse_term()。
 
-    
+      
 
 4. **关键要求和考虑：**
     * **消除左递归 (Left Recursion Elimination):** 直接左递归（如 A -> A α）会导致 parse_A() 无限调用自身而不消耗任何输入，必须将其改写为右递归或使用循环。
@@ -542,7 +543,7 @@ Predict parser 接受 LL(k) grammar。缩写来源：
 
 移入-归约解析的主要挑战在于决定何时移入以及何时归约，特别是当栈顶的符号串可以有多种归约方式，或者既可以移入也可以归约时，就会产生**冲突 (Conflicts)**：
 
--   **移入-归约冲突 (Shift-Reduce Conflict):** 解析器既可以选择移入下一个输入符号，也可以选择将栈顶的句柄归约。例如，在C语言中解析 if (expr) if (expr) s1; else s2; 时的 "dangling else" 问题。
+-   **移入-归约冲突 (Shift-Reduce Conflict):** 解析器既可以选择移入下一个输入符号，也可以选择将栈顶的句柄归约。例如，在C语言中解析 `if (expr) if (expr) s1; else s2;` 时的 "dangling else" 问题。
 -   **归约-归约冲突 (Reduce-Reduce Conflict):** 栈顶的符号串可以匹配多个产生式的右部，解析器不知道应该使用哪个产生式进行归约。
 
 |   冲突类型    |       原因       |                           解决方法                           |
@@ -672,6 +673,7 @@ SLR(1) 解析（Simple LR(1) Parsing）是自底向上（Bottom-Up）语法分�
 
 **结论：** 在栈为 $ 'b'，下一个输入符号为 'a' 时，解析器面临选择：是归约 'b' 为 A (匹配 S -> A 'a') 还是归约 'b' 为 B (匹配 S -> B 'a')？由于 'a' 同时在 FOLLOW(A) 和 FOLLOW(B) 中，所以这是一个**归约-归约冲突**。SLR(1) 解析器无法决定，这个文法不是 SLR(1) 文法。
 
+[cool-tour中文总结](assignments/PA3/cool-tour-chinese.md)
 
 -------
 
